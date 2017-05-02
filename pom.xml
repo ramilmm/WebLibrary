@@ -7,16 +7,19 @@
     <artifactId>WebLibrary</artifactId>
     <version>0.1.0</version>
 
-    <parent>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-parent</artifactId>
-        <version>1.5.3.RELEASE</version>
-    </parent>
-
     <properties>
         <java.version>1.8</java.version>
         <hsqldb.version>2.3.4</hsqldb.version>
+        <jsoup.version>1.8.3</jsoup.version>
+        <springboot.version>1.5.3.RELEASE</springboot.version>
     </properties>
+
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>${springboot.version}</version>
+    </parent>
+
 
     <dependencies>
         <dependency>
@@ -32,6 +35,13 @@
             <artifactId>hsqldb</artifactId>
             <version>${hsqldb.version}</version>
         </dependency>
+        <!--&lt;!&ndash; https://mvnrepository.com/artifact/org.jsoup/jsoup &ndash;&gt;-->
+        <dependency>
+            <groupId>org.jsoup</groupId>
+            <artifactId>jsoup</artifactId>
+            <version>1.8.3</version>
+        </dependency>
+
 
     </dependencies>
 

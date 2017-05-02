@@ -22,9 +22,6 @@ public class BookRepositoryImpl implements BookRepository{
 
     @Override
     public List<Book> findAll() {
-        jdbcTemplate.execute("DROP TABLE Books IF EXISTS");
-        jdbcTemplate.execute("CREATE TABLE Books(" +
-                "id INTEGER, name VARCHAR(255), author VARCHAR(255))");
         List<Object[]> splitUpNames = Stream.of("John Woo", "Jeff Dean", "Josh Bloch", "Josh Long")
                 .map(name -> name.split(" "))
                 .collect(Collectors.toList());
