@@ -1,7 +1,0 @@
-DROP TABLE Books IF EXISTS;
-
-CREATE TABLE Books(
-  id INTEGER,
-  name VARCHAR(255),
-  author VARCHAR(255)
-  );
