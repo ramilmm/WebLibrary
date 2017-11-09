@@ -12,7 +12,6 @@ import java.io.*;
 import java.net.SocketTimeoutException;
 import java.util.*;
 
-@Service
 public class HTMLParser{
 
     private final String BASE_DOMAIN = "http://gov.cap.ru";
@@ -88,8 +87,15 @@ public class HTMLParser{
 
         Elements textNodes = doc.select("div.ItemInfo p");
         StringBuilder text = new StringBuilder();
-        for (int i = 2; i < textNodes.size() - 3; i ++) {
-            text.append(textNodes.get(i).text()).append("\n");
+        if (textNodes.size() > 4) {
+            for (int i = 2; i < textNodes.size() - 2; i++) {
+                text.append(textNodes.get(i).text()).append("\n\n");
+            }
+        }else {
+            textNodes = doc.select("div.ItemInfo span");
+            for (Element span : textNodes) {
+                text.append(span.text()).append("\n\n");
+            }
         }
 
         ArrayList<String> photoLinks = new ArrayList<>();
