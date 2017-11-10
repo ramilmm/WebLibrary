@@ -3,16 +3,6 @@ package WebLibrary.Service;
 import WebLibrary.Model.Post;
 import WebLibrary.Repository.PostRepository;
 import WebLibrary.Utils.HTMLParser;
-import com.google.gson.Gson;
-import com.google.gson.JsonElement;
-import com.vk.api.sdk.client.TransportClient;
-import com.vk.api.sdk.client.VkApiClient;
-import com.vk.api.sdk.client.actors.ServiceActor;
-import com.vk.api.sdk.exceptions.ApiException;
-import com.vk.api.sdk.exceptions.ClientException;
-import com.vk.api.sdk.httpclient.HttpTransportClient;
-import com.vk.api.sdk.objects.ServiceClientCredentialsFlowResponse;
-import com.vk.api.sdk.objects.wall.responses.GetResponse;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -34,10 +24,8 @@ import javax.imageio.ImageIO;
 import javax.transaction.Transactional;
 import java.awt.image.BufferedImage;
 import java.io.*;
-import java.lang.reflect.Array;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -45,11 +33,11 @@ import java.util.List;
 @Configurable
 public class PostService {
 
-    private final String ACCESS_TOKEN = "011b64bec13b7b5ea771f52299ff4859cb59e9d1b6cf48403b2c3f5713f5f2ddd00cd8a27037fe7127161";
-    private final Integer PUBLIC_ID = -149091110;
+    private final String ACCESS_TOKEN = "3192b4e8bce78bb9a9622b54941710405f8213557503c62a69110dabaee965eba5905113aa8c6996a62dd";
+    private final Integer PUBLIC_ID = -120120712;
     private final String API_VERSION = "5.69";
-    private final Integer ALBUM_ID = 248199641;
-    private final Integer PROFILE_ID = 21397454;
+    private final Integer ALBUM_ID = 249933107;
+    private final Integer PROFILE_ID = 451871926;
     private Long photo_id = 0l;
 
     @Autowired
@@ -97,6 +85,7 @@ public class PostService {
                 postRepository.save(post);
                 try {
                     sendToSuggestedNews(post);
+                    sendNotification(post);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -240,6 +229,37 @@ public class PostService {
             e.printStackTrace();
         }
         return String.valueOf(buf).replaceAll("\\\\", "");
+    }
+
+    public void sendNotification(Post post) {
+        HttpClient client = HttpClients.custom()
+                .setDefaultRequestConfig(RequestConfig.custom()
+                        .setCookieSpec(CookieSpecs.STANDARD).build())
+                .build();
+        StringBuilder msg = new StringBuilder("");
+        msg.append("Новая новость!").append("\n\n")
+                .append(post.getTitle()).append("\n\n")
+                .append("https://vk.com/kanash_news");
+        HttpPost request = new HttpPost("https://api.vk.com/method/messages.send");
+        ArrayList<NameValuePair> postParameters = new ArrayList<NameValuePair>();
+        postParameters.add(new BasicNameValuePair("user_id", "362122119"));
+        postParameters.add(new BasicNameValuePair("random_id", String.valueOf(PUBLIC_ID + PROFILE_ID + photo_id)));
+        postParameters.add(new BasicNameValuePair("peer_id", "362122119"));
+        postParameters.add(new BasicNameValuePair("message", String.valueOf(msg)));
+        postParameters.add(new BasicNameValuePair("access_token", ACCESS_TOKEN));
+        postParameters.add(new BasicNameValuePair("v", API_VERSION));
+        try {
+            request.setEntity(new UrlEncodedFormEntity(postParameters,"UTF-8"));
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        HttpResponse response = null;
+        try {
+            response = client.execute(request);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        System.out.println(getJson(response));
     }
 
 }
