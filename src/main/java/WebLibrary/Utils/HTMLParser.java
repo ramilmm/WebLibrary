@@ -6,7 +6,6 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-import org.springframework.stereotype.Service;
 
 import java.io.*;
 import java.net.SocketTimeoutException;
@@ -27,10 +26,10 @@ public class HTMLParser{
         if (site.equals("site_1")) {
             curSite = SITE_1;
         }else curSite = SITE_2;
-
-        mainNews = getLast8("div#ContentBody_MainNews div.ListItem_Mini a",BASE_DOMAIN + curSite);
-        news = getLast8("div#ContentBody_News div.ListItem_Mini a",BASE_DOMAIN + curSite);
-        declarations = getLast8("div#ContentBody_Declarations div.ListItem_Mini a",BASE_DOMAIN + curSite);
+        System.out.println("Start parsing " + curSite + "\n");
+        mainNews = getLast5("div#ContentBody_MainNews div.ListItem_Mini div.LI_Info_Mini",BASE_DOMAIN + curSite);
+        news = getLast5("div#ContentBody_News div.ListItem_Mini div.LI_Info_Mini",BASE_DOMAIN + curSite);
+        declarations = getLast5("div#ContentBody_Declarations div.ListItem_Mini div.LI_Info_Mini",BASE_DOMAIN + curSite);
     }
 
     public ArrayList<Post> getPosts(String type) {
@@ -57,19 +56,23 @@ public class HTMLParser{
         return posts;
     }
 
-    private ArrayList<NewsItem> getLast8(String cssQuery, String domain) {
-        Document doc = getDocument( domain);
+    private ArrayList<NewsItem> getLast5(String cssQuery, String domain) {
+        Document doc = getDocument(domain);
         assert doc != null;
-        Elements last8 = doc.select(cssQuery);
+        Elements last5 = doc.select(cssQuery);
         ArrayList<NewsItem> newsTitle = new ArrayList<>();
-        String href;
-        for (int i = 0; i < 8; i++) {
-            href = last8.get(i).attr("href");
+        String href,date;
+        int limit = last5.size() > 5 ? 5 : last5.size();
+        for (int i = 0; i < limit; i++) {
+            href = last5.get(i).child(1).attr("href");
+            date = last5.get(i).child(0).text();
 
             NewsItem item = new NewsItem();
 
-            item.setTitle(last8.get(i).text());
+            item.setTitle(last5.get(i).child(1).text());
             item.setLink(href);
+            item.setPublish_date(date);
+
             if (href.contains("type")) {
                 item.setType(href.substring(href.indexOf("type=") + 5, href.indexOf('&')));
             }else item.setType("declarations");
@@ -116,6 +119,8 @@ public class HTMLParser{
         post.setSource(BASE_DOMAIN + news.getLink());
         post.setType(news.getType());
         post.setPhotoLinks(photoLinks);
+        post.setNewsId(news.getNews_id());
+        post.setPublish_date(news.getPublish_date());
 
         return post;
     }

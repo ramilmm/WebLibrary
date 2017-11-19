@@ -13,6 +13,10 @@ public class Post {
     @Column(length = 512)
     private String title;
     @Transient
+    private String newsId;
+    @Column
+    private String publish_date;
+    @Transient
     private String text;
     @Transient
     private String source;
@@ -23,9 +27,10 @@ public class Post {
 
     public Post(){}
 
-    public Post(long id, String title, String text, String source, ArrayList<String> photoLinks, String type) {
-        this.id = id;
+    public Post(String title, String newsId, String publish_date, String text, String source, ArrayList<String> photoLinks, String type) {
         this.title = title;
+        this.newsId = newsId;
+        this.publish_date = publish_date;
         this.text = text;
         this.source = source;
         this.photoLinks = photoLinks;
@@ -46,6 +51,22 @@ public class Post {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public String getNewsId() {
+        return newsId;
+    }
+
+    public void setNewsId(String newsId) {
+        this.newsId = newsId;
+    }
+
+    public String getPublish_date() {
+        return publish_date;
+    }
+
+    public void setPublish_date(String publish_date) {
+        this.publish_date = publish_date;
     }
 
     public String getText() {
@@ -78,5 +99,19 @@ public class Post {
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    @Override
+    public String toString() {
+        return "Post{" +
+                "id=" + id +
+                ", title='" + title + '\'' +
+                ", newsId='" + newsId + '\'' +
+                ", publish_date='" + publish_date + '\'' +
+                ", text='" + text + '\'' +
+                ", source='" + source + '\'' +
+                ", photoLinks=" + photoLinks +
+                ", type='" + type + '\'' +
+                '}';
     }
 }

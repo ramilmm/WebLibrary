@@ -17,6 +17,7 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import javax.imageio.ImageIO;
@@ -25,8 +26,12 @@ import java.awt.image.BufferedImage;
 import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Configurable
@@ -34,10 +39,14 @@ public class PostService {
 
     private final String ACCESS_TOKEN = "3192b4e8bce78bb9a9622b54941710405f8213557503c62a69110dabaee965eba5905113aa8c6996a62dd";
     private final Integer PUBLIC_ID = -120120712;
+//    private final Integer PUBLIC_ID = -149091110;
     private final String API_VERSION = "5.69";
     private final Integer ALBUM_ID = 249933107;
     private final Integer PROFILE_ID = 451871926;
+    private final Integer SEND_TO = 362122119;
+//    private final Integer SEND_TO = 296861219;
     private Long photo_id = 0l;
+    private List<Post> notificationCity;
 
     @Autowired
     private PostRepository postRepository;
@@ -55,21 +64,46 @@ public class PostService {
         return postRepository.findAll();
     }
 
+    @Scheduled(fixedDelay = 1200000, initialDelay = 1000)
+    public void run() {
+        parse("site_1");
+        parse("site_2");
+    }
+
     public void parse(String site) {
+        DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
         HTMLParser html = new HTMLParser();
         html.parse(site);
 
+        System.out.print(dateFormat.format(new Date()) + " ");
+
+
+
+
         ArrayList<Post> allPosts = (ArrayList<Post>) postRepository.findAll();
         ArrayList<Post> mainNews = html.getPosts("main");
+
         saveList(mainNews,allPosts);
 
+        System.out.print(dateFormat.format(new Date()) + " ");
         allPosts = (ArrayList<Post>) postRepository.findAll();
         ArrayList<Post> news = html.getPosts("news");
         saveList(news,allPosts);
 
+
+
+        System.out.print(dateFormat.format(new Date()) + " ");
         allPosts = (ArrayList<Post>) postRepository.findAll();
+
+        notificationCity = allPosts.stream()
+                .filter(post -> post.getTitle().contains("Водоканал") || post.getTitle().contains("Информационное донесение"))
+                .collect(Collectors.toList());
+
         ArrayList<Post> declarations = html.getPosts("declarations");
         saveList(declarations,allPosts);
+
+
+
     }
 
     public void saveList(ArrayList<Post> list, ArrayList<Post> alreadyExist){
@@ -78,6 +112,14 @@ public class PostService {
             for (Post exist: alreadyExist) {
                 if (post.getTitle().equals(exist.getTitle())) {
                     isExist = true;
+                    if (post.getTitle().contains("Водоканал") || post.getTitle().contains("Информационное донесение")) {
+                        for (Post p : notificationCity) {
+                            if (post.getTitle().equals(p.getTitle()) && post.getPublish_date().equals(p.getPublish_date())) {
+                                isExist = true;
+                                break;
+                            }else isExist = false;
+                        }
+                    }
                 }
             }
             if (!isExist) {
@@ -92,6 +134,7 @@ public class PostService {
             isExist = false;
         }
     }
+
 
     public void sendToSuggestedNews(Post post) throws IOException {
         HttpClient client = HttpClients.custom()
@@ -204,7 +247,6 @@ public class PostService {
             }
         }
         catch (FileNotFoundException e) {
-            // handle exception
         } catch (MalformedURLException e) {
             e.printStackTrace();
         } catch (IOException e) {
@@ -236,14 +278,14 @@ public class PostService {
                         .setCookieSpec(CookieSpecs.STANDARD).build())
                 .build();
         StringBuilder msg = new StringBuilder("");
-        msg.append("Новая новость!").append("\n\n")
-                .append(post.getTitle()).append("\n\n")
+        msg.append("Новая новость!").append("\n")
+                .append(post.getTitle()).append("\n")
                 .append("https://vk.com/kanash_news");
         HttpPost request = new HttpPost("https://api.vk.com/method/messages.send");
         ArrayList<NameValuePair> postParameters = new ArrayList<NameValuePair>();
-        postParameters.add(new BasicNameValuePair("user_id", "362122119"));
+        postParameters.add(new BasicNameValuePair("user_id", String.valueOf(SEND_TO)));
         postParameters.add(new BasicNameValuePair("random_id", String.valueOf(PUBLIC_ID + PROFILE_ID + photo_id)));
-        postParameters.add(new BasicNameValuePair("peer_id", "362122119"));
+        postParameters.add(new BasicNameValuePair("peer_id", String.valueOf(SEND_TO)));
         postParameters.add(new BasicNameValuePair("message", String.valueOf(msg)));
         postParameters.add(new BasicNameValuePair("access_token", ACCESS_TOKEN));
         postParameters.add(new BasicNameValuePair("v", API_VERSION));
@@ -252,13 +294,17 @@ public class PostService {
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
+        try {
+            Thread.sleep(500);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         HttpResponse response = null;
         try {
             response = client.execute(request);
         } catch (IOException e) {
             e.printStackTrace();
         }
-        System.out.println(getJson(response));
     }
 
 }
