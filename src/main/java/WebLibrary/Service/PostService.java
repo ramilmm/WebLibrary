@@ -96,7 +96,7 @@ public class PostService {
         allPosts = (ArrayList<Post>) postRepository.findAll();
 
         notificationCity = allPosts.stream()
-                .filter(post -> post.getTitle().contains("Водоканал") || post.getTitle().contains("Информационное донесение"))
+                .filter(post -> post.getTitle().contains("Водоканал") || post.getTitle().contains("Информационное донесение") || post.getTitle().contains("неблагоприятных метеорологических"))
                 .collect(Collectors.toList());
 
         ArrayList<Post> declarations = html.getPosts("declarations");
@@ -112,7 +112,7 @@ public class PostService {
             for (Post exist: alreadyExist) {
                 if (post.getTitle().equals(exist.getTitle())) {
                     isExist = true;
-                    if (post.getTitle().contains("Водоканал") || post.getTitle().contains("Информационное донесение")) {
+                    if (post.getTitle().contains("Водоканал") || post.getTitle().contains("Информационное донесение") || post.getTitle().contains("неблагоприятных метеорологических")) {
                         for (Post p : notificationCity) {
                             if (post.getTitle().equals(p.getTitle()) && post.getPublish_date().equals(p.getPublish_date())) {
                                 isExist = true;
