@@ -6,16 +6,16 @@ public class NewsItem {
     private String link;
     private String type;
     private String news_id;
-    private String publish_date;
+    private String publish;
 
     public NewsItem(){}
 
-    public NewsItem(String title, String link, String type, String news_id, String publish_date) {
+    public NewsItem(String title, String link, String type, String news_id, String publish) {
         this.title = title;
         this.link = link;
         this.type = type;
         this.news_id = news_id;
-        this.publish_date = publish_date;
+        this.publish = publish;
     }
 
     public String getTitle() {
@@ -50,12 +50,12 @@ public class NewsItem {
         this.news_id = news_id;
     }
 
-    public String getPublish_date() {
-        return publish_date;
+    public String getPublish() {
+        return publish;
     }
 
-    public void setPublish_date(String publish_date) {
-        this.publish_date = publish_date;
+    public void setPublish(String publish) {
+        this.publish = publish;
     }
 }
 

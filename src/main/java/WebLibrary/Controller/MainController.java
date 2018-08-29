@@ -1,5 +1,6 @@
 package WebLibrary.Controller;
 
+import WebLibrary.Service.MorningPostService;
 import WebLibrary.Service.PostService;
 import WebLibrary.Utils.HTMLParser;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +14,8 @@ public class MainController {
 
     @Autowired
     private PostService postService;
+    @Autowired
+    private MorningPostService morningPostService;
 
 
     @GetMapping("/")
@@ -24,9 +27,16 @@ public class MainController {
     @GetMapping("/check")
     public String checkApp() {
         HTMLParser html = new HTMLParser();
-        html.parse("site_1");
+        html.parse("kanashen");
         return "Working!";
     }
+
+    @GetMapping("/morning")
+    public String checkMorning() {
+        morningPostService.morningTask();
+        return "200";
+    }
+
 
 
 

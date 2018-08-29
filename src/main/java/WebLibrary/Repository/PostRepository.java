@@ -2,6 +2,7 @@ package WebLibrary.Repository;
 
 
 import WebLibrary.Model.Post;
+import javafx.geometry.Pos;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -13,6 +14,9 @@ import java.util.List;
 public interface PostRepository extends JpaRepository<Post, Long> {
 
     Post findPostByTitle(String title);
+
+    ArrayList<Post> findFirst50ByOrderByIdDesc();
+
     ArrayList<Post> findPostByType(String type);
 
 

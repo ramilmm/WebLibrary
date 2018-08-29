@@ -15,7 +15,7 @@ public class Post {
     @Transient
     private String newsId;
     @Column
-    private String publish_date;
+    private String publish;
     @Transient
     private String text;
     @Transient
@@ -27,10 +27,10 @@ public class Post {
 
     public Post(){}
 
-    public Post(String title, String newsId, String publish_date, String text, String source, ArrayList<String> photoLinks, String type) {
+    public Post(String title, String newsId, String publish, String text, String source, ArrayList<String> photoLinks, String type) {
         this.title = title;
         this.newsId = newsId;
-        this.publish_date = publish_date;
+        this.publish = publish;
         this.text = text;
         this.source = source;
         this.photoLinks = photoLinks;
@@ -61,12 +61,12 @@ public class Post {
         this.newsId = newsId;
     }
 
-    public String getPublish_date() {
-        return publish_date;
+    public String getPublish() {
+        return publish;
     }
 
-    public void setPublish_date(String publish_date) {
-        this.publish_date = publish_date;
+    public void setPublish(String publish) {
+        this.publish = publish;
     }
 
     public String getText() {
@@ -107,7 +107,7 @@ public class Post {
                 "id=" + id +
                 ", title='" + title + '\'' +
                 ", newsId='" + newsId + '\'' +
-                ", publish_date='" + publish_date + '\'' +
+                ", publish='" + publish + '\'' +
                 ", text='" + text + '\'' +
                 ", source='" + source + '\'' +
                 ", photoLinks=" + photoLinks +

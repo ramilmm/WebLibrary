@@ -2,3 +2,11 @@
 .idea/**
 target/
 .gitignore
+conf/
+fonts/
+icons/
+morning/
+logs/
+img1.png
+img2.png
+img3.png
