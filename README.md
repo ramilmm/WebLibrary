@@ -16,7 +16,6 @@ To start you need to fill the contents of the following folders:
 The application uses a server Jetty.
 
 ```java
-# mvn install
-# mvn spring-boot run
+# mvn spring-boot:run
 
 ```
