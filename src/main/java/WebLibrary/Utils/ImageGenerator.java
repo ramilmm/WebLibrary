@@ -69,14 +69,14 @@ public class ImageGenerator {
                 break;
             case "declarations": {
                 String text = post.getTitle() + "\n" + post.getText().toLowerCase();
-                if (text.contains("водоканал") || text.contains("газпром") || text.contains("электроэнергии") || text.contains("погодные условия") || text.contains("метеорологических")) {
+                if (text.contains("водоканал") || text.contains("газпром") || text.contains("об отключении газа") || text.contains("электроэнергии") || text.contains("погодные условия") || text.contains("метеорологических")) {
                     holst.drawString(notificationTitle, xForNotificationTitle, yForNotificationTitle);
 
                     holst.setFont(ClearSansThin);
 
                     if (text.contains("водоканал")) {
                         notificationSubtitle = "ВОДОКАНАЛ";
-                    } else if (text.contains("газпром")) {
+                    } else if (text.contains("газпром") || text.contains("об отключении газа")) {
                         notificationSubtitle = "ГАЗПРОМ";
                     } else if (text.contains("электроэнергии")) {
                         notificationSubtitle = "ЭЛЕКТРОЭНЕРГИЯ";

@@ -111,8 +111,6 @@ public class MorningImageCreator {
 
         //rendering weather data
 
-        System.out.println(wd.toString());
-
         holst.setFont(ClearSansThin);
 
         holst.drawString("Утро", xForWeatherTitle, yForWeatherTitle);
@@ -155,14 +153,29 @@ public class MorningImageCreator {
 
         HttpResponse response = client.execute(request);
 
-        String responseString = new BasicResponseHandler().handleResponse(response);
+        log.info("WEATHER API RESPONSE CODE: " + response.getStatusLine().getStatusCode());
 
-        System.out.println(responseString);
+        if( response.getStatusLine().getStatusCode() == 500 ) {
+            log.error("ERROR AT API RESPONSE!");
+            log.info("WAITING FOR A MINUTE");
+            try {
+                Thread.sleep(60000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            log.info("STARTING ANOTHER ATTEMPT");
+            getWeatherData();
+        }else if ( response.getStatusLine().getStatusCode() == 200 ){
 
-        Gson gson = new Gson();
-        WeatherResponseJson weather = gson.fromJson(responseString, WeatherResponseJson.class);
+            String responseString = new BasicResponseHandler().handleResponse(response);
 
-        setWD(weather);
+            Gson gson = new Gson();
+            WeatherResponseJson weather = gson.fromJson(responseString, WeatherResponseJson.class);
+
+            setWD(weather);
+
+            log.info(wd.toString());
+        }
 
     }
 
@@ -237,7 +250,6 @@ public class MorningImageCreator {
 
     private String getRandomBG() {
         int random = 1 + (int) (Math.random() * 19);
-        System.out.println(random);
         return "morning/m" + random + ".png";
     }
 
